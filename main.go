@@ -30,7 +30,7 @@ func main() {
 		fmt.Printf("err: %v\n", err)
 		return
 	}
-	data, err := json.Marshal([]any{j})
+	data, err := json.Marshal(j)
 	if err != nil {
 		return
 	}

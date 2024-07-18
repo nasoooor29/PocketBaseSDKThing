@@ -161,6 +161,10 @@ func ParseField(f reflect.StructField) (any, error) {
 		return ParseNumberOptions(f)
 	case reflect.Bool:
 		return ParseBoolOptions(f)
+	case reflect.Struct:
+		return nil, ErrStruct
+	case reflect.Ptr:
+		return nil, ErrStruct
 	default:
 		return nil, fmt.Errorf("type %v not supported on %v", f.Type.Kind(), f.Name)
 	}

@@ -1,54 +1,13 @@
 [
     {
-        "id": "290db7b1d1a21c70a735d13f404578328cb91baf2f70aba83f439721a4fdc987",
-        "name": "Person",
+        "id": "cd77930f5c4685fd5609a8a72be080535c7d7f2f875616150c3fa0248a235269",
+        "name": "InnerStruct",
         "type": "base",
         "system": false,
         "schema": [
             {
                 "system": false,
-                "id": "5b0777953b2fa0ba54aa6e2a768ba48b777026a902bbdd67650c470231dfd8c8",
-                "name": "Name",
-                "type": "text",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": 1,
-                    "max": 5,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "0e6d8104b0228882c7a92c1afe54854685953716f7db8f26fbd588a129dd571e",
-                "name": "Age",
-                "type": "number",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": 1,
-                    "max": 10,
-                    "noDecimal": false
-                }
-            },
-            {
-                "system": false,
-                "id": "03ec2134ef9d958e682962ca52f1bd1bf08fd9aac7c0d2171097dce579dc1374",
-                "name": "Date",
-                "type": "date",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": "2022-01-01 00:00:00 +0000 UTC",
-                    "max": "2022-01-01 00:00:00 +0000 UTC"
-                }
-            },
-            {
-                "system": false,
-                "id": "6408f9aa45853ed60a60a06a3cb88c6087f4dc2230669d3886bd4f394820275a",
+                "id": "3bb216d15f983dffe5e9e9b445b4ca5da1305ff1c2eea5c3a5f3ce174bf4c314",
                 "name": "InnerName",
                 "type": "text",
                 "required": false,
@@ -62,7 +21,7 @@
             },
             {
                 "system": false,
-                "id": "4d147acdae471853be9eaac8b962bc3a8b672d2a72f5c6867c9b1bdf79085160",
+                "id": "42e46bfae9b0833c9475c55d4158b2426680fdc650a42521b27f62fff4f13ab3",
                 "name": "InnerAge",
                 "type": "number",
                 "required": false,
@@ -72,6 +31,78 @@
                     "min": 0,
                     "max": 0,
                     "noDecimal": false
+                }
+            }
+        ],
+        "indexes": null,
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "0a447c45ab2cb5860bb5cd34b6958433a98c7740e259644b28ea18ec5713c070",
+        "name": "Person",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "c287116e8a2776a52f90b659edd28ee647f1674d68e71fec09dfbb3cfe6e06a3",
+                "name": "Name",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 5,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "e62f1d0a8ffea35a22d6589d057bf8b449978db70fda7d5c0883eb7af91add29",
+                "name": "Age",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 10,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "de031069d43455fcb694e25b33ccb7c3d2cc86e39ae281ec55a90f35c5060c02",
+                "name": "Date",
+                "type": "date",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": "2022-01-01 00:00:00 +0000 UTC",
+                    "max": "2022-01-01 00:00:00 +0000 UTC"
+                }
+            },
+            {
+                "system": false,
+                "id": "a07c00fa147af00fd8e4e8fa62270dcdc36986d94e9f6f5bf6fb17ce48ed343b",
+                "name": "Inner",
+                "type": "relation",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "collectionId": "cd77930f5c4685fd5609a8a72be080535c7d7f2f875616150c3fa0248a235269",
+                    "cascadeDelete": false,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": null
                 }
             }
         ],
