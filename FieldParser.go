@@ -33,28 +33,7 @@ func GetTheFields(f reflect.StructField) map[string]string {
 	return fields
 }
 
-func GenerateFieldData(f reflect.StructField) (data FieldData) {
-	data.ID = GenerateUniqueHash()
-	data.Name = f.Name
-	fields := GetTheFields(f)
-
-	_, found := fields["required"]
-	if found {
-		data.Required = true
-	}
-	_, found = fields["presentable"]
-	if found {
-		data.Presentable = true
-	}
-	_, found = fields["unique"]
-	if found {
-		data.Unique = true
-	}
-
-	return data
-}
-
-func ParseTextOptions(f reflect.StructField) (opts PbTextFieldOptions, err error) {
+func ParseTextField(f reflect.StructField) (opts PbField[PbTextFieldOptions], err error) {
 	fields := GetTheFields(f)
 	minStr, found := fields["min"]
 	if found {
@@ -62,7 +41,7 @@ func ParseTextOptions(f reflect.StructField) (opts PbTextFieldOptions, err error
 		if err != nil {
 			return opts, fmt.Errorf("%v min must be a number on text field", f.Name)
 		}
-		opts.Min = min
+		opts.Options.Min = min
 	}
 	maxStr, found := fields["max"]
 	if found {
@@ -70,7 +49,7 @@ func ParseTextOptions(f reflect.StructField) (opts PbTextFieldOptions, err error
 		if err != nil {
 			return opts, fmt.Errorf("%v max must be a number on text field", f.Name)
 		}
-		opts.Max = max
+		opts.Options.Max = max
 	}
 	pattern, found := fields["pattern"]
 	if found {
@@ -78,13 +57,19 @@ func ParseTextOptions(f reflect.StructField) (opts PbTextFieldOptions, err error
 		if err != nil {
 			return opts, fmt.Errorf("%v pattern must be a valid regex on text field", f.Name)
 		}
-		opts.Pattern = pattern
+		opts.Options.Pattern = pattern
 	}
+	opts.ID = GenerateUniqueHash()
+	opts.Name = f.Name
+	_, opts.Required = fields["required"]
+	_, opts.Presentable = fields["presentable"]
+	_, opts.Unique = fields["unique"]
+	opts.Type = "text"
 	return opts, nil
 
 }
 
-func ParseNumberOptions(f reflect.StructField) (opts PbNumberFieldOptions, err error) {
+func ParseNumberOptions(f reflect.StructField) (opts PbField[PbNumberFieldOptions], err error) {
 	fields := GetTheFields(f)
 	minStr, found := fields["min"]
 	if found {
@@ -92,7 +77,7 @@ func ParseNumberOptions(f reflect.StructField) (opts PbNumberFieldOptions, err e
 		if err != nil {
 			return opts, fmt.Errorf("%v min must be a number on number field", f.Name)
 		}
-		opts.Min = min
+		opts.Options.Min = min
 	}
 	maxStr, found := fields["max"]
 	if found {
@@ -100,64 +85,46 @@ func ParseNumberOptions(f reflect.StructField) (opts PbNumberFieldOptions, err e
 		if err != nil {
 			return opts, fmt.Errorf("%v max must be a number on number field", f.Name)
 		}
-		opts.Max = max
+		opts.Options.Max = max
 	}
-	_, found = fields["nodecimal"]
-	if found {
-		opts.NoDecimal = true
-	}
+	opts.ID = GenerateUniqueHash()
+	opts.Name = f.Name
+	_, opts.Required = fields["required"]
+	_, opts.Presentable = fields["presentable"]
+	_, opts.Unique = fields["unique"]
+	_, opts.Options.NoDecimal = fields["nodecimal"]
+	opts.Type = "number"
 	return opts, nil
+}
 
+func ParseBoolOptions(f reflect.StructField) (opts PbField[PbBoolFieldOptions], err error) {
+	opts.ID = GenerateUniqueHash()
+	fields := GetTheFields(f)
+	opts.Name = f.Name
+	_, opts.Required = fields["required"]
+	_, opts.Presentable = fields["presentable"]
+	_, opts.Unique = fields["unique"]
+	opts.Type = "boolean"
+	return opts, nil
 }
 
 func ParseField(f reflect.StructField) (any, error) {
 	t := f.Tag.Get("type")
-	data := GenerateFieldData(f)
-	if t == "" && f.Type.Kind() == reflect.String {
-		opts, err := ParseTextOptions(f)
-		if err != nil {
-			return nil, err
-		}
-		result := &PbField[PbTextFieldOptions]{
-			FieldData: &data,
-			Options:   opts,
-		}
-		result.FieldData.Type = "text"
-		return result, nil
+	if t != "" {
+		return nil, fmt.Errorf("type %v not supported", f.Type.Kind())
 	}
-	if t == "" && f.Type.Kind() == reflect.Int {
-		opts, err := ParseNumberOptions(f)
-		if err != nil {
-			return nil, err
-		}
-		result := &PbField[PbNumberFieldOptions]{
-			FieldData: &data,
-			Options:   opts,
-		}
-		result.FieldData.Type = "number"
-		return result, nil
-	}
-	if t == "" && f.Type.Kind() == reflect.Bool {
-		result := &PbField[PbBoolFieldOptions]{
-			FieldData: &data,
-		}
-		result.FieldData.Type = "boolean"
-		return result, nil
-	}
-	if t == "" && f.Type.Kind() == reflect.Ptr { // this need to be recursive
-		result := &PbField[PbRelationFieldOptions]{
-			FieldData: &data,
-		}
-		result.FieldData.Type = "relation"
-		return result, nil // deal with the relation later
-	}
-	if t == "" && f.Type.Kind() == reflect.Struct {
-		// result := &PbField[PbObjectFieldOptions]{
-		// 	FieldData: &data,
-		// }
-		// result.FieldData.Type = "object"
-		// return result, nil // deal with the relation
+	switch f.Type.Kind() {
+	case reflect.String:
+		return ParseTextField(f)
+	case reflect.Int:
+		return ParseNumberOptions(f)
+	case reflect.Bool:
+		return ParseBoolOptions(f)
+	case reflect.Ptr: // this need to be recursive
+		return nil, fmt.Errorf("pointer type not supported")
+	case reflect.Struct:
 		return nil, fmt.Errorf("struct type not supported")
+	default:
+		return nil, fmt.Errorf("type %v not supported", f.Type.Kind())
 	}
-	return nil, fmt.Errorf("type %v not supported", f.Type.Kind())
 }

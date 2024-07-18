@@ -67,18 +67,14 @@ type PbFieldType interface {
 }
 
 type PbField[fieldType PbFieldType] struct { // it's the fields inside the struct
-	*FieldData `json:"fieldData"` // it's the same for all types
-	Options   fieldType `json:"options"`   // it would be different for each type
-}
-
-type FieldData struct {
-	System      bool   `json:"system"`      // same as above
-	ID          string `json:"id"`          // auto generated
-	Name        string `json:"name"`        // field name
-	Type        string `json:"type"`        // the available types on pocketbase so we should make a map and custom types for this
-	Required    bool   `json:"required"`    // if the field is required when creating new object it's off by default
-	Presentable bool   `json:"presentable"` // it's false by default
-	Unique      bool   `json:"unique"`      // it's false by default
+	System      bool      `json:"system"`      // same as above
+	ID          string    `json:"id"`          // auto generated
+	Name        string    `json:"name"`        // field name
+	Type        string    `json:"type"`        // the available types on pocketbase so we should make a map and custom types for this
+	Required    bool      `json:"required"`    // if the field is required when creating new object it's off by default
+	Presentable bool      `json:"presentable"` // it's false by default
+	Unique      bool      `json:"unique"`      // it's false by default
+	Options     fieldType `json:"options"`     // it would be different for each type
 }
 
 // Collection related Structs

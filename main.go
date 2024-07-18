@@ -6,40 +6,24 @@ import (
 	"os"
 )
 
-type MyCustomStruct struct {
-	Name        string       `pb:"min=1,max=100"` // for these i think we should use tags to define the options
-	Age         int          `pb:"min=1,max=300,NoDecimal"`
-	Active      bool         `pb:"required"`
-	CustomField string       `json:"customField"`
-	nest        NestedStruct // if pointer i think we should make another table and make a relation
-	// if no pointer we add the fields on the parent struct
-}
-
-type NestedStruct struct {
-	Name   string `json:"name"`
-	Age    int    `json:"age"`
-	Active bool   `json:"active"`
+type Person struct {
+	Name string `pb:"required,min:1,max:5"`
+	Age  int `pb:"required,min=1,max=10"`
 }
 
 func main() {
-	myStruct := MyCustomStruct{
-		Name:        "test",
-		Age:         32,
-		Active:      true,
-		CustomField: "a1",
-		nest: NestedStruct{
-			Name:   "a1",
-			Age:    32,
-			Active: false,
-		},
-	}
 
-	j, err := GenerateBaseCollection(myStruct)
+	j, err := GenerateBaseCollection(
+		Person{
+			Name: "",
+			Age:  0,
+		},
+	)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		return
 	}
-	data, err := json.Marshal(j)
+	data, err := json.Marshal([]any{j})
 	if err != nil {
 		return
 	}
