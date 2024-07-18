@@ -1,13 +1,13 @@
 [
     {
-        "id": "706ece839ab0f26a1fc5d405c3f406e794afa5a84b8cac78398065b9502d0bd2",
+        "id": "290db7b1d1a21c70a735d13f404578328cb91baf2f70aba83f439721a4fdc987",
         "name": "Person",
         "type": "base",
         "system": false,
         "schema": [
             {
                 "system": false,
-                "id": "e967be30bb55f024f2c1447a9c11fe94b52bb84331ead2e952e497402580e01b",
+                "id": "5b0777953b2fa0ba54aa6e2a768ba48b777026a902bbdd67650c470231dfd8c8",
                 "name": "Name",
                 "type": "text",
                 "required": true,
@@ -21,7 +21,7 @@
             },
             {
                 "system": false,
-                "id": "1ba0f953b9c481828659f05f565dd3841a7a91287c3e050ecc8d7eaca35432c1",
+                "id": "0e6d8104b0228882c7a92c1afe54854685953716f7db8f26fbd588a129dd571e",
                 "name": "Age",
                 "type": "number",
                 "required": true,
@@ -35,7 +35,7 @@
             },
             {
                 "system": false,
-                "id": "3323cdbe9d62a80deb11c49bc66cc6e769a4f6dc0685caeba682e64a2e3908e8",
+                "id": "03ec2134ef9d958e682962ca52f1bd1bf08fd9aac7c0d2171097dce579dc1374",
                 "name": "Date",
                 "type": "date",
                 "required": true,
@@ -44,6 +44,34 @@
                 "options": {
                     "min": "2022-01-01 00:00:00 +0000 UTC",
                     "max": "2022-01-01 00:00:00 +0000 UTC"
+                }
+            },
+            {
+                "system": false,
+                "id": "6408f9aa45853ed60a60a06a3cb88c6087f4dc2230669d3886bd4f394820275a",
+                "name": "InnerName",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 0,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "4d147acdae471853be9eaac8b962bc3a8b672d2a72f5c6867c9b1bdf79085160",
+                "name": "InnerAge",
+                "type": "number",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 0,
+                    "noDecimal": false
                 }
             }
         ],

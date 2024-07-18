@@ -5,11 +5,11 @@ import (
 	"reflect"
 )
 
-// input: 
+// input:
 type MyCustomStruct struct {
 	Name  string
 	Age   int
-	inner MyInnerStruct
+	Inner MyInnerStruct
 }
 
 type MyInnerStruct struct {
@@ -19,12 +19,11 @@ type MyInnerStruct struct {
 
 // output:
 type ResultStruct struct {
-	Name  string
-	Age   int
+	Name      string
+	Age       int
 	InnerName string
 	InnerAge  int
 }
-
 
 // i know it should be like but for "simplicity" func GenerateCollectionSchema[T CollectionType](val any) (result PocketBaseCollection[T], err error) {
 func GenerateBaseCollection(val any) (result PocketBaseCollection[PbBaseCollectionOptions], err error) {
@@ -37,28 +36,29 @@ func GenerateBaseCollection(val any) (result PocketBaseCollection[PbBaseCollecti
 	coll.Name = t.Name()
 	coll.System = false
 	coll.Type = "base"
-	coll.System = false
 	coll.ID = GenerateUniqueHash()
+	if err := parseFields(t, &coll); err != nil {
+		return result, err
+	}
+	return coll, nil
+}
+
+func parseFields(t reflect.Type, coll *PocketBaseCollection[PbBaseCollectionOptions]) error {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
+		fmt.Printf("t.Name: %v, %v.%v\n", t.Name(), t.Name(), field.Name)
+		a, err := ParseField(field)
+		if err == nil {
+			coll.Schema = append(coll.Schema, a)
+			continue
+		}
 		if field.Type.Kind() == reflect.Struct {
-			for j := 0; j < field.Type.NumField(); j++ {
-				innerField := field.Type.Field(j)
-				a, err := ParseField(innerField)
-				if err != nil {
-					return result, err
-				}
-				coll.Schema = append(coll.Schema, a)
+			if err := parseFields(field.Type, coll); err != nil {
+				return err
 			}
 			continue
 		}
-		a, err := ParseField(field)
-		
-		if err != nil {
-			return result, err
-		}
-
-		coll.Schema = append(coll.Schema, a)
+		return err
 	}
-	return coll, nil
+	return nil
 }

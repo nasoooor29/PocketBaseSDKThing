@@ -8,9 +8,15 @@ import (
 )
 
 type Person struct {
-	Name string    `pb:"required,min:1,max:5"`
-	Age  int       `pb:"required,min=1,max=10"`
-	Date time.Time `pb:"required,min=2022-01-01 00:00:00.000,max=2022-12-31 23:59:59.000"`
+	Name  string    `pb:"required,min:1,max:5"`
+	Age   int       `pb:"required,min=1,max=10"`
+	Date  time.Time `pb:"required,min=2022-01-01 00:00:00.000,max=2022-12-31 23:59:59.000"`
+	Inner InnerStruct
+}
+
+type InnerStruct struct {
+	InnerName string
+	InnerAge  int
 }
 
 func main() {
