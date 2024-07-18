@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func GetTheFields(f reflect.StructField) map[string]string {
+func GetTagsMap(f reflect.StructField) map[string]string {
 	pbType, found := f.Tag.Lookup("pb")
 	if !found {
 		return nil
@@ -35,7 +35,7 @@ func GetTheFields(f reflect.StructField) map[string]string {
 }
 
 func ParseTextField(f reflect.StructField) (opts PbField[PbTextFieldOptions], err error) {
-	fields := GetTheFields(f)
+	fields := GetTagsMap(f)
 	minStr, found := fields["min"]
 	if found {
 		min, err := strconv.Atoi(minStr)
@@ -70,7 +70,7 @@ func ParseTextField(f reflect.StructField) (opts PbField[PbTextFieldOptions], er
 }
 
 func ParseNumberOptions(f reflect.StructField) (opts PbField[PbNumberFieldOptions], err error) {
-	fields := GetTheFields(f)
+	fields := GetTagsMap(f)
 	minStr, found := fields["min"]
 	if found {
 		min, err := strconv.Atoi(minStr)
@@ -99,7 +99,7 @@ func ParseNumberOptions(f reflect.StructField) (opts PbField[PbNumberFieldOption
 
 func ParseBoolOptions(f reflect.StructField) (opts PbField[PbBoolFieldOptions], err error) {
 	opts.ID = GenerateUniqueHash()
-	fields := GetTheFields(f)
+	fields := GetTagsMap(f)
 	opts.Name = f.Name
 	_, opts.Required = fields["required"]
 	_, opts.Presentable = fields["presentable"]
@@ -110,7 +110,7 @@ func ParseBoolOptions(f reflect.StructField) (opts PbField[PbBoolFieldOptions], 
 
 // TODO: parse min and max for date (2024-07-20 12:00:00.000Z format)
 func ParseDateField(f reflect.StructField) (opts PbField[PbDateFieldOptions], err error) {
-	fields := GetTheFields(f)
+	fields := GetTagsMap(f)
 	min, found := fields["min"]
 	if found {
 		fmt.Printf("min: %v\n", min)
@@ -139,9 +139,9 @@ func ParseDateField(f reflect.StructField) (opts PbField[PbDateFieldOptions], er
 
 func ParseField(f reflect.StructField) (any, error) {
 	// ? available types: text,file,relation,editor,number,bool,email,url,date,select,json
-	// ? need to be done types: file,relation,email,url,date,select,json
+	// ? need to be done types: file,relation,email,url,select,json
 
-	fields := GetTheFields(f)
+	fields := GetTagsMap(f)
 	v, found := fields["type"]
 	if found && v == "editor" {
 		v, err := ParseTextField(f)
@@ -161,10 +161,6 @@ func ParseField(f reflect.StructField) (any, error) {
 		return ParseNumberOptions(f)
 	case reflect.Bool:
 		return ParseBoolOptions(f)
-	case reflect.Ptr:
-		return nil, ErrStruct
-	case reflect.Struct:
-		return nil, ErrStruct
 	default:
 		return nil, fmt.Errorf("type %v not supported", f.Type.Kind())
 	}
