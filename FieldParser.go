@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func GetTheFields(f reflect.StructField) map[string]string {
@@ -24,10 +25,10 @@ func GetTheFields(f reflect.StructField) map[string]string {
 		if len(field) == 2 {
 			fields[strings.ToLower(field[0])] = field[1]
 		}
-		field = strings.Split(val, " ")
-		if len(field) == 2 {
-			fields[strings.ToLower(field[0])] = field[1]
-		}
+		// field = strings.Split(val, " ")
+		// if len(field) == 2 {
+		// 	fields[strings.ToLower(field[0])] = field[1]
+		// }
 		fields[strings.ToLower(val)] = ""
 	}
 	return fields
@@ -66,7 +67,6 @@ func ParseTextField(f reflect.StructField) (opts PbField[PbTextFieldOptions], er
 	_, opts.Unique = fields["unique"]
 	opts.Type = "text"
 	return opts, nil
-
 }
 
 func ParseNumberOptions(f reflect.StructField) (opts PbField[PbNumberFieldOptions], err error) {
@@ -108,10 +108,51 @@ func ParseBoolOptions(f reflect.StructField) (opts PbField[PbBoolFieldOptions], 
 	return opts, nil
 }
 
+// TODO: parse min and max for date (2024-07-20 12:00:00.000Z format)
+func ParseDateField(f reflect.StructField) (opts PbField[PbDateFieldOptions], err error) {
+	fields := GetTheFields(f)
+	min, found := fields["min"]
+	if found {
+		fmt.Printf("min: %v\n", min)
+		time, err := time.Parse("2006-01-02 15:04:05.000", min)
+		if err != nil {
+			return opts, fmt.Errorf("%v min must be a valid date on date field eg:2006-01-02 15:04:05.000", f.Name)
+		}
+		opts.Options.Min = time.String()
+	}
+	max, found := fields["min"]
+	if found {
+		time, err := time.Parse("2006-01-02 15:04:05.000", max)
+		if err != nil {
+			return opts, fmt.Errorf("%v min must be a valid date on date field eg:2006-01-02 15:04:05.000", f.Name)
+		}
+		opts.Options.Max = time.String()
+	}
+	opts.ID = GenerateUniqueHash()
+	opts.Name = f.Name
+	_, opts.Required = fields["required"]
+	_, opts.Presentable = fields["presentable"]
+	_, opts.Unique = fields["unique"]
+	opts.Type = "date"
+	return opts, nil
+}
+
 func ParseField(f reflect.StructField) (any, error) {
-	t := f.Tag.Get("type")
-	if t != "" {
-		return nil, fmt.Errorf("type %v not supported", f.Type.Kind())
+	// ? available types: text,file,relation,editor,number,bool,email,url,date,select,json
+	// ? need to be done types: file,relation,email,url,date,select,json
+
+	fields := GetTheFields(f)
+	v, found := fields["type"]
+	if found && v == "editor" {
+		v, err := ParseTextField(f)
+		if err != nil {
+			return nil, err
+		}
+		v.Type = "editor"
+		return v, nil
+	}
+	if (f.Type.Kind() == reflect.Ptr || f.Type.Kind() == reflect.Struct) && f.Type.PkgPath() == "time" {
+		return ParseDateField(f)
 	}
 	switch f.Type.Kind() {
 	case reflect.String:
@@ -120,10 +161,10 @@ func ParseField(f reflect.StructField) (any, error) {
 		return ParseNumberOptions(f)
 	case reflect.Bool:
 		return ParseBoolOptions(f)
-	case reflect.Ptr: // this need to be recursive
-		return nil, fmt.Errorf("pointer type not supported")
+	case reflect.Ptr:
+		return nil, ErrStruct
 	case reflect.Struct:
-		return nil, fmt.Errorf("struct type not supported")
+		return nil, ErrStruct
 	default:
 		return nil, fmt.Errorf("type %v not supported", f.Type.Kind())
 	}

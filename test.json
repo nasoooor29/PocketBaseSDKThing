@@ -1,0 +1,58 @@
+[
+    {
+        "id": "706ece839ab0f26a1fc5d405c3f406e794afa5a84b8cac78398065b9502d0bd2",
+        "name": "Person",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "e967be30bb55f024f2c1447a9c11fe94b52bb84331ead2e952e497402580e01b",
+                "name": "Name",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 5,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "1ba0f953b9c481828659f05f565dd3841a7a91287c3e050ecc8d7eaca35432c1",
+                "name": "Age",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 10,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "3323cdbe9d62a80deb11c49bc66cc6e769a4f6dc0685caeba682e64a2e3908e8",
+                "name": "Date",
+                "type": "date",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": "2022-01-01 00:00:00 +0000 UTC",
+                    "max": "2022-01-01 00:00:00 +0000 UTC"
+                }
+            }
+        ],
+        "indexes": null,
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    }
+]

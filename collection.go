@@ -22,7 +22,7 @@ func GenerateBaseCollection(val any) (result PocketBaseCollection[PbBaseCollecti
 		field := t.Field(i)
 		a, err := ParseField(field)
 		if err != nil {
-			fmt.Printf("don't worry the app will continue but: %v\n", err)
+			return result, err
 		}
 		coll.Schema = append(coll.Schema, a)
 	}

@@ -3,40 +3,20 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"reflect"
+	"math/rand"
 	"time"
 )
 
+// GenerateUniqueHash generates a unique hash based on the current time and random bytes
+// * I think it should be shorter but it's good so there is no conflicts
 func GenerateUniqueHash() string {
 	timeBytes := []byte(time.Now().Format("2006-01-02 15:04:05.000"))
 	hash := sha256.New()
 	hash.Write(timeBytes)
+	b := make([]byte, 10)
+	for i := 0; i < len(b); i++ {
+		b[i] = byte(rand.Intn(255))
+	}
+	hash.Write(b)
 	return hex.EncodeToString(hash.Sum(nil))
-}
-
-func GetType(f reflect.StructField) (string, error) {
-	// available types: text,file,relation,editor,number,bool,email,url,date,select,json
-	strings := map[string]string{
-		"text":   "text",
-		"editor": "text",
-	}
-	t := f.Tag.Get("type")
-	v, found := strings[t]
-	if found {
-		return v, nil
-	}
-	if t == "" && f.Type.Kind() == reflect.String {
-		return "text", nil
-	}
-	if t == "" && f.Type.Kind() == reflect.Int {
-		return "number", nil
-	}
-	if t == "" && f.Type.Kind() == reflect.Bool {
-		return "bool", nil
-	}
-	if t == "" && f.Type.Kind() == reflect.Ptr {
-		return "relation", nil
-	}
-
-	return "", nil
 }

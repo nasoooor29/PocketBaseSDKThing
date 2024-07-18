@@ -1,6 +1,11 @@
 package main
 
+import "fmt"
+
 // Field related Structs
+
+var ErrStruct = fmt.Errorf("struct or pointer")
+
 
 type PbTextFieldOptions struct {
 	Min     int    `json:"min"` // null by default or there is not value
