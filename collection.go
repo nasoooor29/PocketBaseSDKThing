@@ -5,25 +5,6 @@ import (
 	"reflect"
 )
 
-// input:
-type MyCustomStruct struct {
-	Name  string
-	Age   int
-	Inner MyInnerStruct
-}
-
-type MyInnerStruct struct {
-	InnerName string
-	InnerAge  int
-}
-
-// output:
-type ResultStruct struct {
-	Name      string
-	Age       int
-	InnerName string
-	InnerAge  int
-}
 
 func GenerateBaseCollection(val any) (result []PocketBaseCollection[PbBaseCollectionOptions], err error) {
 	t := reflect.TypeOf(val)

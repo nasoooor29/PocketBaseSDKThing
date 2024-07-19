@@ -120,11 +120,11 @@ func ParseDateField(f reflect.StructField) (opts PbField[PbDateFieldOptions], er
 		}
 		opts.Options.Min = time.String()
 	}
-	max, found := fields["min"]
+	max, found := fields["max"]
 	if found {
 		time, err := time.Parse("2006-01-02 15:04:05.000", max)
 		if err != nil {
-			return opts, fmt.Errorf("%v min must be a valid date on date field eg:2006-01-02 15:04:05.000", f.Name)
+			return opts, fmt.Errorf("%v max must be a valid date on date field eg:2006-01-02 15:04:05.000", f.Name)
 		}
 		opts.Options.Max = time.String()
 	}
